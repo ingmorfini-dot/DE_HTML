@@ -1,12 +1,18 @@
 <style>
-/* 🔹 Contenitore griglia */
+/* ────────────────────────────────────────────────
+   📦 Layout generale della griglia
+────────────────────────────────────────────────── */
 .griglia {
   flex: 1;
   padding: 1rem;
   min-height: 300px;
+  /* background-color: #181818; */ /* ← puoi attivarlo se vuoi cambiare sfondo */
+  border-radius: 10px;
 }
 
-/* 🔹 Tabella */
+/* ────────────────────────────────────────────────
+   📊 Tabella e struttura
+────────────────────────────────────────────────── */
 .griglia table {
   width: 100%;
   border-collapse: separate;
@@ -16,7 +22,9 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🔹 Celle compatte */
+/* ────────────────────────────────────────────────
+   🧱 Celle generiche
+────────────────────────────────────────────────── */
 .griglia td {
   padding: 4px 10px;
   line-height: 1.2;
@@ -25,11 +33,12 @@
   color: #f0f0f0;
 }
 
-/* 🔹 Colonna icona */
+/* ────────────────────────────────────────────────
+   🧩 Colonna icona (Tipo)
+────────────────────────────────────────────────── */
 .griglia td.tipo {
   width: 40px;
   font-size: 1.2rem;
-  border-left: none;
   opacity: 0.6;
   transition: opacity 0.2s ease;
 }
@@ -37,21 +46,33 @@
   opacity: 1;
 }
 
-/* 🔹 Gerarchia visiva con sfondi differenziati */
+/* ────────────────────────────────────────────────
+   🎨 Stili per righe specifiche
+────────────────────────────────────────────────── */
+
+/* Cliente: bordo verde tenue e glow */
 .riga.Cliente {
-  background-color: #121212 !important; /* più scuro */
-  border-left: 4px solid #007acc;
+  background-color: #121212 !important;
+  border: 2px solid #33cc99;
+  border-radius: 8px;
+  box-shadow: 0 0 12px #33cc99;
 }
+
+/* Gruppo: sfondo medio e bordo sinistro */
 .riga.Gruppo {
-  background-color: #1f1f1f !important; /* grigio medio */
+  background-color: #1f1f1f !important;
   border-left: 8px solid #00aa88;
 }
+
+/* Sito: sfondo chiaro e bordo sinistro */
 .riga.Sito {
-  background-color: #2c2c2c !important; /* grigio chiaro */
+  background-color: #2c2c2c !important;
   border-left: 12px solid #ffaa00;
 }
 
-/* 🔹 Indentazione */
+/* ────────────────────────────────────────────────
+   📐 Indentazione per gerarchia
+────────────────────────────────────────────────── */
 .riga.Gruppo td {
   padding-left: 16px;
 }
@@ -59,24 +80,31 @@
   padding-left: 32px;
 }
 
-/* 🔹 Hover più evidente */
+/* ────────────────────────────────────────────────
+   ✨ Effetto hover su righe
+────────────────────────────────────────────────── */
 .riga:hover {
   background-color: #444 !important;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2), inset 0 0 6px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2),
+              inset 0 0 6px rgba(255, 255, 255, 0.1);
   transform: scale(1.01);
   transition: all 0.2s ease;
 }
 
-/* 🔹 Fade-in animazione */
+/* ────────────────────────────────────────────────
+   🎞️ Animazione di comparsa
+────────────────────────────────────────────────── */
 .riga {
   animation: fadeIn 0.3s ease-in;
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* 🔹 Pulsanti nella griglia */
+/* ────────────────────────────────────────────────
+   🔘 Pulsanti nella griglia
+────────────────────────────────────────────────── */
 .griglia td button {
   padding: 0.4rem 0.8rem;
   background-color: #333;
@@ -90,26 +118,7 @@
 .griglia td button:hover {
   background-color: #555;
 }
-
-
-#filtro-nome,
-#filtro-piva {
-  background-color: #0a0a0a;
-  color: #f0f0f0;
-  border: 1px solid #555;
-  padding: 0.5rem;
-  border-radius: 5px;
-  pointer-events: auto;
-  opacity: 1;
-  z-index: 10;
-}
-
 </style>
-
-
-
-
-
 
 <div class="pagina-clienti">
   <h2>Gestione Clienti</h2>
@@ -130,6 +139,7 @@
         <tr>
           <th>Tipo</th>
           <th>Nome</th>
+		  <th>Indirizzo</th>
           <th>P.Iva</th>
           <th>Tipo Impresa</th>
           <th>Apri</th>
@@ -139,6 +149,7 @@
         <tr id="riga-modello" style="display: none;">
           <td class="tipo"></td>
           <td class="nome"></td>
+		  <td class="indirizzo"></td>
           <td class="piva"></td>
           <td class="impresa"></td>
           <td><button>Apri</button></td>
@@ -155,8 +166,17 @@ function inviaFiltro() {
   document.getElementById('ponte').value = ponte;
 }
 
+function svuotaTabella() {
+  console.log("svuotaTabella chiamata");
+  var corpo = document.getElementById('tabella-clienti').querySelector('tbody');
+  Array.from(corpo.children).forEach(function(riga) {
+    if (riga.id !== 'riga-modello') {
+      riga.remove();
+    }
+  });
+}
 
-function aggiungiCliente(tipo, nome, piva, impresa) {
+function aggiungiCliente(tipo, nome, indirizzo, piva, impresa) {
   var modello = document.getElementById('riga-modello');
   var nuova = modello.cloneNode(true);
   nuova.removeAttribute('id');
@@ -192,6 +212,7 @@ function aggiungiCliente(tipo, nome, piva, impresa) {
   cellaTipo.setAttribute('style', stile);
 
   nuova.querySelector('.nome').textContent = nome;
+  nuova.querySelector('.indirizzo').textContent = indirizzo;
   nuova.querySelector('.piva').textContent = piva;
   nuova.querySelector('.impresa').textContent = impresa;
   nuova.querySelector('button').setAttribute('onclick', "document.getElementById('ponte').value='Clienti:Apri:" + nome + "'");
@@ -199,18 +220,30 @@ function aggiungiCliente(tipo, nome, piva, impresa) {
   document.getElementById('tabella-clienti').querySelector('tbody').appendChild(nuova);
 }
 
+function impostaSuggerimenti(idCampo, arrayValori) {
+  const campo = document.getElementById(idCampo);
+  if (!campo) return;
 
+  const datalistId = idCampo + "-datalist";
+  let datalist = document.getElementById(datalistId);
+  if (!datalist) {
+    datalist = document.createElement("datalist");
+    datalist.id = datalistId;
+    document.body.appendChild(datalist);
+    campo.setAttribute("list", datalistId);
+  }
 
-
-function svuotaTabella() {
-  console.log("svuotaTabella chiamata");
-  var corpo = document.getElementById('tabella-clienti').querySelector('tbody');
-  Array.from(corpo.children).forEach(function(riga) {
-    if (riga.id !== 'riga-modello') {
-      riga.remove();
+  // 🔄 Accoda solo valori non già presenti
+  const esistenti = new Set(Array.from(datalist.children).map(opt => opt.value));
+  arrayValori.forEach(val => {
+    if (!esistenti.has(val)) {
+      const option = document.createElement("option");
+      option.value = val;
+      datalist.appendChild(option);
     }
   });
 }
+
 
 
 </script>
