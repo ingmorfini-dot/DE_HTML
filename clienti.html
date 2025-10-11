@@ -1,0 +1,216 @@
+<style>
+/* 🔹 Contenitore griglia */
+.griglia {
+  flex: 1;
+  padding: 1rem;
+  min-height: 300px;
+}
+
+/* 🔹 Tabella */
+.griglia table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* 🔹 Celle compatte */
+.griglia td {
+  padding: 4px 10px;
+  line-height: 1.2;
+  border: none;
+  background-color: transparent;
+  color: #f0f0f0;
+}
+
+/* 🔹 Colonna icona */
+.griglia td.tipo {
+  width: 40px;
+  font-size: 1.2rem;
+  border-left: none;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.riga:hover td.tipo {
+  opacity: 1;
+}
+
+/* 🔹 Gerarchia visiva con sfondi differenziati */
+.riga.Cliente {
+  background-color: #121212 !important; /* più scuro */
+  border-left: 4px solid #007acc;
+}
+.riga.Gruppo {
+  background-color: #1f1f1f !important; /* grigio medio */
+  border-left: 8px solid #00aa88;
+}
+.riga.Sito {
+  background-color: #2c2c2c !important; /* grigio chiaro */
+  border-left: 12px solid #ffaa00;
+}
+
+/* 🔹 Indentazione */
+.riga.Gruppo td {
+  padding-left: 16px;
+}
+.riga.Sito td {
+  padding-left: 32px;
+}
+
+/* 🔹 Hover più evidente */
+.riga:hover {
+  background-color: #444 !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2), inset 0 0 6px rgba(255, 255, 255, 0.1);
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+
+/* 🔹 Fade-in animazione */
+.riga {
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🔹 Pulsanti nella griglia */
+.griglia td button {
+  padding: 0.4rem 0.8rem;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+.griglia td button:hover {
+  background-color: #555;
+}
+
+
+#filtro-nome,
+#filtro-piva {
+  background-color: #0a0a0a;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  padding: 0.5rem;
+  border-radius: 5px;
+  pointer-events: auto;
+  opacity: 1;
+  z-index: 10;
+}
+
+</style>
+
+
+
+
+
+
+<div class="pagina-clienti">
+  <h2>Gestione Clienti</h2>
+
+  <div class="filtro">
+    <label for="filtro-nome">Nome:</label>
+    <input type="text" id="filtro-nome" placeholder="Inserisci il nome del cliente" />
+
+    <label for="filtro-piva">P.Iva:</label>
+    <input type="text" id="filtro-piva" placeholder="Inserisci P.Iva" />
+
+    <button onclick="inviaFiltro()">Cerca</button>
+  </div>
+
+  <div class="griglia">
+    <table id="tabella-clienti">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Nome</th>
+          <th>P.Iva</th>
+          <th>Tipo Impresa</th>
+          <th>Apri</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id="riga-modello" style="display: none;">
+          <td class="tipo"></td>
+          <td class="nome"></td>
+          <td class="piva"></td>
+          <td class="impresa"></td>
+          <td><button>Apri</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function inviaFiltro() {
+  const nome = document.getElementById('filtro-nome').value;
+  const ponte = 'Clienti:Cerca:"Nome=' + nome + '"';
+  document.getElementById('ponte').value = ponte;
+}
+
+
+function aggiungiCliente(tipo, nome, piva, impresa) {
+  var modello = document.getElementById('riga-modello');
+  var nuova = modello.cloneNode(true);
+  nuova.removeAttribute('id');
+  nuova.style.display = '';
+
+  // 🔹 Assegna classi per stile visivo
+  nuova.classList.add('riga', tipo); // ✅ questa è la chiave
+
+  // 🔹 Inserimento icona e allineamento
+  var icona = '';
+  var stile = '';
+
+  switch (tipo) {
+    case 'Cliente':
+      icona = '👤';
+      stile = 'text-align: left;';
+      break;
+    case 'Gruppo':
+      icona = '👥';
+      stile = 'text-align: center;';
+      break;
+    case 'Sito':
+      icona = '📍';
+      stile = 'text-align: right;';
+      break;
+    default:
+      icona = tipo;
+      stile = 'text-align: left;';
+  }
+
+  var cellaTipo = nuova.querySelector('.tipo');
+  cellaTipo.innerHTML = icona;
+  cellaTipo.setAttribute('style', stile);
+
+  nuova.querySelector('.nome').textContent = nome;
+  nuova.querySelector('.piva').textContent = piva;
+  nuova.querySelector('.impresa').textContent = impresa;
+  nuova.querySelector('button').setAttribute('onclick', "document.getElementById('ponte').value='Clienti:Apri:" + nome + "'");
+
+  document.getElementById('tabella-clienti').querySelector('tbody').appendChild(nuova);
+}
+
+
+
+
+function svuotaTabella() {
+  console.log("svuotaTabella chiamata");
+  var corpo = document.getElementById('tabella-clienti').querySelector('tbody');
+  Array.from(corpo.children).forEach(function(riga) {
+    if (riga.id !== 'riga-modello') {
+      riga.remove();
+    }
+  });
+}
+
+
+</script>

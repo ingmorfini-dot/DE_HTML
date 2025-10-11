@@ -1,0 +1,65 @@
+<div class="pagina-fornitori">
+  <h2>Elenco Fornitori</h2>
+
+  <div class="filtro">
+    <label for="filtro-nome">Nome fornitore:</label>
+    <input type="text" id="filtro-nome" placeholder="Inserisci il nome del fornitore" />
+    <button onclick="inviaFiltro()">Cerca</button>
+  </div>
+
+  <table id="tabella-fornitori">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Servizio</th>
+        <th>Contatto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Le righe verranno iniettate da VBA -->
+      <tr id="riga-modello" style="display:none;">
+        <td class="nome"></td>
+        <td class="servizio"></td>
+        <td class="contatto"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function inviaFiltro() {
+    const nome = document.getElementById('filtro-nome').value;
+    const ponte = 'Fornitori:Cerca:"Nome=' + nome + '"';
+    document.getElementById('ponte').value = ponte;
+  }
+</script>
+
+<style>
+  .pagina-fornitori {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    padding: 2rem;
+  }
+  h2 {
+    color: #ff9800;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  th, td {
+    padding: 0.8rem;
+    border: 1px solid #333;
+    text-align: left;
+  }
+  th {
+    background-color: #2c2c2c;
+    color: #fff;
+  }
+  td {
+    background-color: #1f1f1f;
+  }
+</style>
+
