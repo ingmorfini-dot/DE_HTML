@@ -15,25 +15,27 @@
   max-width: 100%;          /* non supera il contenitore */
   border-collapse: separate;
   border-spacing: 0;
-  margin-top: 1rem;
+  margin-top: 0.1rem;
   font-size: 0.85rem;
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* 🧱 Celle generiche */
+/* 🧱 Celle generiche compatte */
 .griglia td,
 .griglia th {
-  padding: 4px 10px;
-  line-height: 1.2;
+  padding: 2px 8px;              /* meno spazio interno verticale */
+  line-height: 1.0;              /* altezza testo più stretta */
+  font-size: 0.75rem;            /* testo leggermente più piccolo */
   border: none;
   background-color: transparent;
   color: #f0f0f0;
-  white-space: nowrap;         /* impedisce il ritorno a capo */
+  white-space: nowrap;          /* impedisce il ritorno a capo */
   overflow: hidden;
-  text-overflow: ellipsis;     /* mostra "..." se il testo è troppo lungo */
-  max-width: 500px;            /* ⬅️ larghezza massima per cella */
+  text-overflow: ellipsis;      /* mostra "..." se il testo è troppo lungo */
+  max-width: 500px;             /* ⬅️ larghezza massima per cella */
   box-sizing: border-box;
 }
+
 
 /* 🧩 Colonna icona (Tipo) */
 .griglia td.tipo {
@@ -118,7 +120,7 @@
   padding: 1rem;
   background-color: #1a1a1a;
   border-radius: 10px;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
 }
 .filtro-clienti label {
   color: #f0f0f0;
@@ -168,16 +170,22 @@
 <div class="pagina-clienti">
   <h2>Gestione Clienti</h2>
 
-  <div class="filtro-clienti">
+<div class="filtro-clienti">
+  <div class="riga-singola">
     <label for="filtro-nome">👤 Nome:</label>
-	<input type="text" id="filtro-nome" class="filtro-nome-datalist" placeholder="Inserisci il nome del cliente" />
-
+    <input type="text" id="filtro-nome" class="filtro-nome-datalist" placeholder="Inserisci il nome del cliente" />
+  </div>
+  <div class="riga-singola">
     <label for="filtro-piva">🏢 P.Iva:</label>
-	<input type="text" id="filtro-piva" class="filtro-piva-datalist" placeholder="Inserisci P.Iva" />
-
+    <input type="text" id="filtro-piva" class="filtro-piva-datalist" placeholder="Inserisci P.Iva" />
+  </div>
+  <div class="riga-singola">
     <button onclick="inviaFiltro()" class="btn-filtra">🔍 Cerca</button>
+    <button onclick="mostraTutti()" class="btn-filtra">📋 Mostra tutti</button>
     <button onclick="azzeraFiltro()" class="btn-pulisci">🧹 Pulisci</button>
   </div>
+</div>
+
 
   <div class="griglia">
     <table id="tabella-clienti">
@@ -224,6 +232,10 @@ function azzeraFiltro() {
   document.getElementById('filtro-nome').value = '';
   document.getElementById('filtro-piva').value = '';
   document.getElementById('ponte').value = '';
+}
+function mostraTutti() {
+  document.getElementById('filtro-nome').value = '*';
+  inviaFiltro();
 }
 
 function svuotaTabella() {
