@@ -5,7 +5,7 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #1c1c1c; /* ✅ colore di sfondo unico */
+  background-color: #1c1c1c;
   color: #f0f0f0;
   display: flex;
   flex-direction: column;
@@ -65,59 +65,137 @@ header img {
 }
 
 /* ────────────────────────────────────────────────
-   📄 Contenuto principale
+   🧭 Layout split-view con divisore
 ────────────────────────────────────────────────── */
-main {
-  flex: 1;
-  padding: 1rem 2rem;
+.split-view {
   display: flex;
-  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
-/* ────────────────────────────────────────────────
-   🖼️ Iframe
-────────────────────────────────────────────────── */
-iframe {
+#colonna-sinistra,
+#colonna-destra {
   flex: 1;
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #000;
-}
-
-/* ────────────────────────────────────────────────
-   📥 Filtro di ricerca
-────────────────────────────────────────────────── */
-.filtro {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+  overflow-y: auto;
   padding: 1rem;
-  border: 1px solid #333;
-  border-radius: 10px;
-  margin-bottom: 1rem;
 }
 
-.filtro label {
-  margin-right: 0.5rem;
-}
-
-.filtro select,
-.filtro input {
-  padding: 0.5rem;
-  border-radius: 5px;
-  border: 1px solid #555;
-  background-color: #0a0a0a;
-  color: #f0f0f0;
+#divisore {
+  width: 6px;
+  background-color: #333;
+  cursor: col-resize;
 }
 
 /* ────────────────────────────────────────────────
-   📢 Footer
+   📢 Footer fisso
 ────────────────────────────────────────────────── */
 footer {
-  color: #aaa;
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 2rem;
+  background-color: #1a1a1a;
+  color: #ccc;
+  font-size: 0.8rem;
   border-top: 1px solid #333;
+  z-index: 999;
 }
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4rem; /* ✅ margine interno orizzontale */
+  flex-wrap: wrap;
+}
+
+.btn-log {
+  padding: 4px 10px;
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #666;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  max-width: 100px;
+}
+
+/* ────────────────────────────────────────────────
+   📋 Cruscotto ponte
+────────────────────────────────────────────────── */
+.cruscotto-ponte {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  width: 400px;
+  max-height: 300px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto;
+  box-shadow: 0 0 10px #000;
+  z-index: 1000;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.cruscotto-ponte h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.log-ponte div {
+  border-bottom: 1px solid #333;
+  padding: 4px 0;
+}
+
+/* ────────────────────────────────────────────────
+   🧼 Utility
+────────────────────────────────────────────────── */
+.hidden {
+  display: none;
+}
+
+/* ────────────────────────────────────────────────
+   📐 Layout principale
+────────────────────────────────────────────────── */
+.split-view {
+  display: flex;
+  height: calc(100vh - 100px); /* Adatta in base a header/footer */
+  width: 100%;
+  overflow: hidden;
+}
+
+#colonna-sinistra,
+#colonna-destra {
+  overflow-y: auto;
+  padding: 20px;
+  height: 100%;
+}
+
+/* Larghezza iniziale della colonna sinistra */
+#colonna-sinistra {
+  flex: none;
+  width: 500px;
+  max-width: 100%;
+}
+
+/* Colonna destra si adatta al resto dello spazio */
+#colonna-destra {
+  flex-grow: 1;
+}
+
+/* ────────────────────────────────────────────────
+   ↔️ Divisore centrale
+────────────────────────────────────────────────── */
+#divisore {
+  width: 5px;
+  background-color: #ccc;
+  cursor: col-resize;
+}
+

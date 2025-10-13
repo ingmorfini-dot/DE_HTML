@@ -6,38 +6,175 @@
   <title>Dashboard Applicazione</title>
   <link rel="stylesheet" href="style.css" />
   <script>
-function caricaMaschera(nome) {
-  // Segnala l'inizio del caricamento
-  document.getElementById('ponte').value = 'home:' + nome + ':load';
+  // 🔹 Carica una maschera (es. clienti.html) nella colonna sinistra
+  function caricaMaschera(nome) {
+    // ✅ Invia segnale di "load" a VBA
+    document.getElementById('ponte').value = 'home:' + nome + ':load';
 
-  fetch(nome + '.html')
-    .then(response => response.text())
-    .then(html => {
-      const contenitore = document.getElementById('contenuto');
-      contenitore.innerHTML = ''; // rimuove il contenuto precedente
-      contenitore.innerHTML = html; // inserisce il nuovo contenuto
+    fetch(nome + '.html')
+      .then(response => response.text())
+      .then(html => {
+        const contenitore = document.getElementById('colonna-sinistra');
+        contenitore.innerHTML = '';
+        contenitore.innerHTML = html;
 
-      // Esegui manualmente gli script contenuti nel frammento
-      const scripts = contenitore.querySelectorAll('script');
-      scripts.forEach(oldScript => {
-        const newScript = document.createElement('script');
-        if (oldScript.src) {
-          newScript.src = oldScript.src;
-        } else {
-          newScript.textContent = oldScript.textContent;
-        }
-        document.head.appendChild(newScript);
+        // 🔹 Reiniezione manuale degli script inline (necessaria dopo innerHTML)
+        const scripts = contenitore.querySelectorAll('script');
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement('script');
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+          document.head.appendChild(newScript); 
+        });
+
+        // ✅ Invia segnale di "ok" a VBA dopo il caricamento
+        document.getElementById('ponte').value = 'home:' + nome + ':ok';
+      })
+      .catch(error => {
+        console.error('Errore nel caricamento:', error);
       });
+  }
 
-      // Segnala che la pagina è pronta
-      document.getElementById('ponte').value = 'home:' + nome + ':ok';
-    })
-    .catch(error => {
-      console.error('Errore nel caricamento:', error);
+  // 🔹 Carica la scheda cliente nella colonna destra
+  function caricaSchedaCliente(nome) {
+    document.getElementById('ponte').value = 'Clienti:Apri:' + nome;
+
+    fetch('clientiScheda.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('colonna-destra').innerHTML = html;
+      });
+  }
+
+  // 🔹 Inizializzazione al caricamento della pagina
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const ponte = document.getElementById('ponte');
+    const log = document.getElementById('log-ponte');
+    const cruscotto = document.getElementById('cruscotto-ponte');
+    const toggleBtn = document.getElementById('toggle-log');
+    let ultimoValore = ponte.value;
+
+    // 🔹 Mostra/nasconde il cruscotto log
+    toggleBtn.addEventListener('click', () => {
+      cruscotto.classList.toggle('hidden');
     });
+
+    // 🔹 Monitoraggio continuo del valore ponte (ogni 200ms)
+    setInterval(() => {
+      if (ponte.value !== ultimoValore && ponte.value.trim() !== "") {
+        const voce = document.createElement('div');
+        voce.textContent = ponte.value;
+        log.prepend(voce);
+        ultimoValore = ponte.value;
+
+        if (log.children.length > 50) {
+          log.removeChild(log.lastChild);
+        }
+      }
+    }, 200);
+
+    // 🔹 Gestione trascinamento del divisore centrale
+    let isDragging = false;
+
+    const divisore = document.getElementById('divisore');
+    const contenitore = document.getElementById('contenuto');
+    const sinistra = document.getElementById('colonna-sinistra');
+    const destra = document.getElementById('colonna-destra');
+
+    // 🔹 Inizio trascinamento
+    divisore.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      document.body.style.cursor = 'col-resize';
+    });
+
+    // 🔹 Trascinamento in corso
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+
+      const offset = e.clientX - contenitore.offsetLeft;
+      const totalWidth = contenitore.offsetWidth;
+      const minWidth = 100;
+
+      if (offset > minWidth && offset < totalWidth - minWidth) {
+        sinistra.style.flex = 'none';
+        sinistra.style.width = offset + 'px';
+        destra.style.flex = '1';
+      }
+    });
+
+    // 🔹 Fine trascinamento
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        document.body.style.cursor = 'default';
+      }
+    });
+  });
+
+// 🔹 Utility per tutte le pagine
+function impostaSuggerimenti(idCampo, arrayValori) {
+  const classeAssociata = idCampo + "-datalist";
+  const campi = document.querySelectorAll("." + classeAssociata);
+
+  if (campi.length === 0) return;
+
+  campi.forEach(campo => {
+    if (campo.tagName !== "INPUT" || campo.type !== "text") return;
+
+    const datalistId = campo.id + "-datalist";
+    let datalist = document.getElementById(datalistId);
+
+    if (!datalist) {
+      datalist = document.createElement("datalist");
+      datalist.id = datalistId;
+      document.body.appendChild(datalist);
+      campo.setAttribute("list", datalistId);
+    }
+
+    const esistenti = new Set(Array.from(datalist.children).map(opt => opt.value));
+    arrayValori.forEach(val => {
+      if (!esistenti.has(val)) {
+        const option = document.createElement("option");
+        option.value = val;
+        datalist.appendChild(option);
+      }
+    });
+  });
 }
 
-  </script>
+
+function impostaOpzioniSelect(idCampo, arrayValori) {
+  const classeTarget = idCampo + "-select";
+  const campi = document.querySelectorAll("." + classeTarget);
+
+  if (campi.length === 0) return;
+
+  campi.forEach(campo => {
+    if (campo.tagName !== "SELECT") return;
+
+    campo.innerHTML = ""; // Pulisce le opzioni esistenti
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Seleziona --";
+    campo.appendChild(placeholder);
+
+    arrayValori.forEach(val => {
+      const option = document.createElement("option");
+      option.value = val;
+      option.textContent = val;
+      campo.appendChild(option);
+    });
+  });
+}
+
+
+</script>
+
 </head>
 <body>
   <header>
@@ -51,16 +188,26 @@ function caricaMaschera(nome) {
     </div>
   </header>
 
-  <main>
-    <div id="contenuto">
-      <!-- Qui verrà iniettato il contenuto dinamico -->
-    </div>
-  </main>
+<main>
+  <div id="contenuto" class="split-view">
+    <div id="colonna-sinistra" class="scroll-colonna"></div>
+    <div id="divisore"></div>
+    <div id="colonna-destra" class="scroll-colonna"></div>
+  </div>
+</main>
+
 
   <footer>
-    &copy; 2025 Marco Solutions — Interfaccia Web in HTML + JS + VBA
+    <div class="footer-content">
+      <span>&copy; 2025 M.Morfini Solutions — DE System HTML</span>
+      <button id="toggle-log" class="btn-log">📋 Log</button>
+    </div>
+    <input type="hidden" id="ponte" value="" />
   </footer>
 
-  <input type="hidden" id="ponte" value="" />
+  <div id="cruscotto-ponte" class="cruscotto-ponte hidden">
+    <h3>📋 Istruzioni inviate a VBA</h3>
+    <div id="log-ponte" class="log-ponte"></div>
+  </div>
 </body>
 </html>
