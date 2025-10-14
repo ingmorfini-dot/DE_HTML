@@ -38,17 +38,7 @@
       });
   }
 
-  // 🔹 Carica la scheda cliente nella colonna destra
-  function caricaSchedaCliente(nome) {
-    document.getElementById('ponte').value = 'Clienti:Apri:' + nome;
-
-    fetch('clientiScheda.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('colonna-destra').innerHTML = html;
-      });
-  }
-
+ 
   // 🔹 Inizializzazione al caricamento della pagina
   
   window.addEventListener('DOMContentLoaded', () => {
