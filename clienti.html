@@ -1,0 +1,331 @@
+<style>
+/* 📦 Layout generale della griglia */
+.griglia {
+  flex: 1;
+  padding: 1rem;
+  min-height: 300px;
+  border-radius: 10px;
+  overflow-x: auto; /* consente scroll orizzontale se necessario */
+}
+
+/* 📊 Tabella e struttura */
+.griglia table {
+  width: auto;              /* larghezza dinamica */
+  table-layout: auto;       /* calcolo automatico larghezze */
+  max-width: 100%;          /* non supera il contenitore */
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.1rem;
+  font-size: 0.85rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* 🧱 Celle generiche compatte */
+.griglia td,
+.griglia th {
+  padding: 2px 8px;              /* meno spazio interno verticale */
+  line-height: 1.0;              /* altezza testo più stretta */
+  font-size: 0.75rem;            /* testo leggermente più piccolo */
+  border: none;
+  background-color: transparent;
+  color: #f0f0f0;
+  white-space: nowrap;          /* impedisce il ritorno a capo */
+  overflow: hidden;
+  text-overflow: ellipsis;      /* mostra "..." se il testo è troppo lungo */
+  max-width: 500px;             /* ⬅️ larghezza massima per cella */
+  box-sizing: border-box;
+}
+
+
+/* 🧩 Colonna icona (Tipo) */
+.griglia td.tipo {
+  width: 40px;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.riga:hover td.tipo {
+  opacity: 1;
+}
+
+/* 🎨 Stili per righe specifiche */
+.riga.Cliente {
+  background-color: #121212 !important;
+  border: 2px solid #33cc99;
+  border-radius: 8px;
+  box-shadow: 0 0 12px #33cc99;
+}
+.riga.Gruppo {
+  background-color: #1f1f1f !important;
+  border-left: 8px solid #00aa88;
+}
+.riga.Sito {
+  background-color: #2c2c2c !important;
+  border-left: 12px solid #ffaa00;
+}
+
+/* 📐 Indentazione per gerarchia */
+.riga.Gruppo td {
+  padding-left: 16px;
+}
+.riga.Sito td {
+  padding-left: 32px;
+}
+
+/* ✨ Effetto hover su righe */
+.riga:hover {
+  background-color: #444 !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2),
+              inset 0 0 6px rgba(255, 255, 255, 0.1);
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+.riga-selezionata {
+  outline: 2px solid #00ffff;
+  box-shadow: 0 0 10px #00ffff;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+/* 🎞️ Animazione di comparsa */
+.riga {
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 🔘 Pulsanti nella griglia */
+.griglia td button {
+  padding: 0.4rem 0.8rem;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+.griglia td button:hover {
+  background-color: #555;
+}
+
+/* 🎛️ Banner filtri clienti */
+.filtro-clienti {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 1rem;
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  margin-bottom: 0rem;
+}
+.filtro-clienti label {
+  color: #f0f0f0;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.filtro-clienti input {
+  padding: 6px 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+  font-size: 0.85rem;
+}
+.filtro-clienti button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+.btn-filtra {
+  background-color: #007bff;
+  color: white;
+}
+.btn-filtra:hover {
+  background-color: #3399ff;
+}
+.btn-pulisci {
+  background-color: #cc3333;
+  color: white;
+}
+.btn-pulisci:hover {
+  background-color: #ff4444;
+}
+.campo-mancante {
+  background-color: #2a2a00 !important;
+  color: #ffcc00 !important;
+  font-style: italic;
+}
+
+
+</style>
+
+<div class="pagina-clienti">
+  <h2>Gestione Clienti</h2>
+
+<div class="filtro-clienti">
+  <div class="riga-singola">
+    <label for="filtro-nome">👤 Nome:</label>
+    <input type="text" id="filtro-nome" class="filtro-nome-datalist" placeholder="Inserisci il nome del cliente" />
+  </div>
+  <div class="riga-singola">
+    <label for="filtro-piva">🏢 P.Iva:</label>
+    <input type="text" id="filtro-piva" class="filtro-piva-datalist" placeholder="Inserisci P.Iva" />
+  </div>
+  <div class="riga-singola">
+    <button onclick="inviaFiltro()" class="btn-filtra">🔍 Cerca</button>
+    <button onclick="mostraTutti()" class="btn-filtra">📋 Mostra tutti</button>
+    <button onclick="azzeraFiltro()" class="btn-pulisci">🧹 Pulisci</button>
+  </div>
+</div>
+
+
+  <div class="griglia">
+    <table id="tabella-clienti">
+		<thead>
+		  <tr>
+			<th>Tipo</th>
+			<th>Nome</th>
+			<th>Indirizzo</th>
+			<th>P.Iva</th>
+			<th>Tipo Impresa</th>
+			<th class="id"></th> <!-- colonna ID nascosta -->
+		  </tr>
+		</thead>
+		<tbody>
+			<tr id="riga-modello" style="display: none;">
+			  <td id="tipo" class="tipo"></td>
+			  <td id="Nome" class="nome"></td>
+			  <td id="indirizzo" class="indirizzo"></td>
+			  <td id="piva" class="piva"></td>
+			  <td id="Tipo_Impresa" class="impresa"></td>
+			  <td id="ID" class="id"></td>
+			</tr>
+		</tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function inviaFiltro() {
+  const nome = document.getElementById('filtro-nome').value;
+  const piva = document.getElementById('filtro-piva').value;
+
+  let ponte = 'Clienti:Cerca:"';
+  if (nome) ponte += 'Nome=' + nome;
+  if (piva) {
+    if (nome) ponte += ';';
+    ponte += 'PIVA=' + piva;
+  }
+  ponte += '"';
+  document.getElementById('ponte').value = ponte;
+}
+
+function azzeraFiltro() {
+  document.getElementById('filtro-nome').value = '';
+  document.getElementById('filtro-piva').value = '';
+  document.getElementById('ponte').value = '';
+}
+function mostraTutti() {
+  document.getElementById('filtro-nome').value = '*';
+  inviaFiltro();
+}
+
+function svuotaTabella() {
+  const corpo = document.getElementById('tabella-clienti').querySelector('tbody');
+  Array.from(corpo.children).forEach(riga => {
+    if (riga.id !== 'riga-modello') riga.remove();
+  });
+}
+
+function getIconaTipo(tipo) {
+  switch (tipo) {
+    case 'Cliente': return { icona: '🏢', stile: 'text-align: left;' };
+    case 'Gruppo':  return { icona: '🏛️', stile: 'text-align: center;' };
+    case 'Sito':    return { icona: '📍', stile: 'text-align: right;' };
+    default:        return { icona: tipo || '❓', stile: 'text-align: left;' };
+  }
+}
+
+function decoraRigaTipo(riga, tipo) {
+  const cellaTipo = riga.querySelector('#tipo');
+  if (!cellaTipo) return;
+  const { icona, stile } = getIconaTipo(tipo);
+  cellaTipo.innerHTML = icona;
+  cellaTipo.setAttribute('style', stile);
+}
+
+function collegaEventoClick(riga, id) {
+  riga.addEventListener('click', () => {
+    document.getElementById('ponte').value = 'Clienti:Apri:' + id;
+    caricaSchedaCliente(id);
+
+    document.querySelectorAll('#tabella-clienti .riga')
+      .forEach(r => r.classList.remove('riga-selezionata'));
+    riga.classList.add('riga-selezionata');
+  });
+}
+
+function aggiungiCliente(dati) {
+  const modello = document.getElementById('riga-modello');
+  const nuova = modello.cloneNode(true);
+  nuova.removeAttribute('id');
+  nuova.style.display = '';
+  nuova.classList.add('riga', dati.tipo || 'Generico');
+
+  // 🔹 Gestione speciale del campo tipo (icone)
+  decoraRigaTipo(nuova, dati.tipo);
+
+  // 🔹 Popola tutte le celle con id corrispondente al nome del campo, tranne 'tipo'
+  const celle = nuova.querySelectorAll('td[id]');
+  celle.forEach(cella => {
+    const campo = cella.id;
+    if (campo === 'tipo') return; // ⛔ Salta il campo tipo
+
+    if (campo in dati) {
+      cella.textContent = dati[campo] || "";
+      cella.classList.remove('campo-mancante');
+    } else {
+      cella.textContent = `⚠️ ${campo}`;
+      cella.classList.add('campo-mancante');
+    }
+  });
+
+  collegaEventoClick(nuova, dati.ID || '');
+  document.getElementById('tabella-clienti').querySelector('tbody').appendChild(nuova);
+}
+
+
+
+
+function caricaSchedaCliente(id) {
+  fetch('clientischeda.html')
+    .then(response => response.text())
+    .then(html => {
+      const contenitore = document.getElementById('colonna-destra');
+      contenitore.innerHTML = html;
+
+      const scripts = contenitore.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        document.head.appendChild(newScript);
+      });
+
+      // ✅ Il VBA riceverà il segnale e inietterà i dati con popolaSchedaCliente(...)
+    });
+}
+
+</script>
+
