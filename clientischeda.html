@@ -1,0 +1,302 @@
+<style>
+/* 🎛️ Toolbar in testa alla scheda */
+.toolbar-scheda {
+  display: flex;
+  gap: 12px;
+  padding: 0.8rem;
+  background: linear-gradient(to right, #222, #333);
+  border-bottom: 2px solid #444;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border-radius: 10px 10px 0 0;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.btn-toolbar {
+  background-color: #444;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.btn-toolbar:hover {
+  background-color: #666;
+  transform: scale(1.05);
+}
+
+/* 📄 Scheda cliente */
+.scheda-cliente {
+  padding: 0.8rem;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', sans-serif;
+  border-radius: 0 0 10px 10px;
+}
+.scheda-cliente h2 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  color: #33cc99;
+}
+.scheda-cliente section {
+  margin-top: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+.scheda-cliente h3 {
+  color: #33cc99; /* oppure #ffcc66 */
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scheda-cliente p {
+  margin: 2px 0;
+  font-size: 0.85rem;
+}
+.scheda-cliente strong {
+  color: #ccc;
+}
+.scheda-cliente label,
+.scheda-cliente strong {
+  color: #66ccff; /* azzurro chiaro */
+  font-weight: bold;
+}
+
+/* 🧾 Campi input */
+.campo-scheda {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.campo-non-editabile {
+  background-color: #333;
+  color: #aaa;
+  border: none;
+  pointer-events: none;
+}
+
+/* 📐 Layout righe */
+.riga-campi {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 0.1rem;
+  flex-wrap: wrap;
+}
+.riga-campi p {
+  margin: 0;
+  flex: 1;
+  min-width: 150px;
+}
+/* ✅ Checkbox visibili e coerenti */
+input[type="checkbox"].campo-scheda {
+  width: 20px;
+  height: 20px;
+  transform: scale(1.4);
+  accent-color: #33cc99;
+  cursor: pointer;
+  margin-left: 6px;
+  margin-right: 6px;
+  vertical-align: middle;
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.campo-mancante {
+  border: 1px solid #ffcc00 !important;
+  background-color: #2a2a00 !important;
+  color: #ffcc00 !important;
+  font-style: italic;
+}
+
+
+
+</style>
+  <h2>📄 Scheda Cliente</h2>
+<div class="toolbar-scheda">
+  <button class="btn-toolbar" onclick="modificaScheda()">✏️ Modifica</button>
+  <button class="btn-toolbar" onclick="salvaScheda()">💾 Salva</button>
+  <button class="btn-toolbar" onclick="esportaScheda()">📤 Esporta</button>
+  <button class="btn-toolbar" onclick="chiudiScheda()">❌ Chiudi</button>
+</div>
+
+<div class="scheda-cliente">
+
+  <!-- 🔹 Dati generali -->
+  <section>
+    <h3>🧾 Dati Generali</h3>
+	<div class="riga-campi">
+		<p><label for="ID">ID:</label> <input id="ID" class="campo-scheda campo-non-editabile" /></p>
+		<p><label for="tipo">Tipo:</label> <input id="tipo" class="campo-scheda campo-non-editabile" /></p>
+		<p><strong>Nome:</strong> <input id="Nome" class="campo-scheda" /></p>
+	</div>
+	<div class="riga-campi">
+		<p><strong>Indirizzo:</strong><input id="indirizzo" class="campo-scheda" /></p> 
+	</div>
+	<div class="riga-campi">
+		<p><strong>P.IVA:</strong> <input id="piva" class="campo-scheda" /></p>
+		<p><strong>Codice Fiscale:</strong> <input id="Codice_Fiscale" class="campo-scheda" /></p>
+		<p><strong>Codice Destinatario:</strong> <input id="Codice_Destinatario" class="campo-scheda" /></p>
+	</div>
+	<div class="riga-campi">
+		<p><strong>Tipo Impresa:</strong><select id="Tipo_Impresa" class="Tipo_Impresa-select campo-scheda"></select></p>
+		<p><strong>ID Sito:</strong> <input id="ID_Sito" class="campo-scheda" /></p>
+		<p><strong>PEC:</strong> <input id="PEC" class="campo-scheda" /></p>
+	</div>
+    <p><strong>Descrizione:</strong> <textarea id="Descrizione" class="campo-scheda"></textarea></p>
+	<div class="riga-campi">
+		<p><strong>Codice SAP:</strong> <input id="Cod_Sap" class="campo-scheda" /></p>
+		<p><strong>Codice ATECO:</strong> <input id="ID_Codice_ATECO" class="campo-scheda" /></p>
+		<p><strong>Registro Imprese:</strong> <input id="Numero_Registro_Imprese" class="campo-scheda" /></p>
+	</div>
+	<div class="riga-campi">
+		<p><strong>Sede Registro:</strong> <input id="Sede_Registro" class="campo-scheda" /></p>
+		<p><strong>Capitale Sociale:</strong> <input id="Capitale_Sociale" class="campo-scheda" /></p>
+	</div>
+  </section>
+
+  <!-- 🔹 Rappresentanza -->
+  <section>
+    <h3>👤 Rappresentanza Legale</h3>
+	<div class="riga-campi">
+		<p><strong>Nome:</strong> <input id="Nome_Rappresentante_Legale" class="campo-scheda" /></p>
+		<p><strong>Cognome:</strong> <input id="Cognome_Rappresentante_Legale" class="campo-scheda" /></p>
+		<p><strong>Qualifica:</strong> <input id="In_Qualita_di" class="campo-scheda" /></p>
+	</div>
+	<div class="riga-campi">
+		<p><strong>Indirizzo Sede Sociale:</strong> <input id="Indirizzo_Sede_Sociale" class="campo-scheda" /></p>
+		<p><strong>Telefono:</strong> <input id="Telefono" class="campo-scheda" /></p>
+		<p><strong>Fax:</strong> <input id="Fax" class="campo-scheda" /></p>
+		<p><strong>Email:</strong> <input id="E_mail" class="campo-scheda" /></p>
+	</div>
+  </section>
+
+  <!-- 🔹 Riferimenti -->
+  <section>
+    <h3>📇 Riferimenti Interni</h3>
+	<div class="riga-campi">
+		<p><strong>Nome:</strong> <input id="Nome_Riferimento" class="campo-scheda" /></p>
+		<p><strong>Cognome:</strong> <input id="Cognome_Riferimento" class="campo-scheda" /></p>
+		<p><strong>Email:</strong> <input id="Mail_Riferimento" class="campo-scheda" /></p>
+	</div>
+  </section>
+
+  <!-- 🔹 Stato energetico -->
+  <section>
+    <h3>⚡ Stato Energetico</h3>
+	<div class="riga-campi">
+		<p><strong>Soggetto Obligato:</strong> <input type="checkbox" id="Soggetto_Obligato" class="campo-scheda" /></p>
+		<p><strong>Grande Impresa:</strong> <input type="checkbox" id="Grande_Impresa" class="campo-scheda" /></p>
+		<p><strong>ISO 50001:</strong> <input type="checkbox" id="Iso_50001" class="campo-scheda" /></p>		
+	</div>
+	<div class="riga-campi">
+		<p><strong>Energivoro:</strong> <input type="checkbox" id="Energivoro" class="campo-scheda" /></p>
+		<p><strong>Gasivoro:</strong> <input type="checkbox" id="Gasivoro" class="campo-scheda" /></p>
+		<p><strong>Sistema di Monitoraggio:</strong> <input type="checkbox" id="Sistema_Di_monitoraggio" class="campo-scheda" /></p>
+	</div>
+	
+	<div class="riga-campi">
+		<p><strong>Password Portale ENEA:</strong> <input id="Password_Portale_ENEA" class="campo-scheda" /></p>
+	</div>
+  </section>
+
+  <!-- 🔹 Storico DE -->
+  <section>
+    <h3>📅 Diagnosi Energetica</h3>
+	<div class="riga-campi">
+		<p><strong>Data Ultima DE:</strong> <input id="Data_Ultima_DE" class="campo-scheda" /></p>
+		<p><strong>Data Prossima DE:</strong> <input id="Data_Prossima_DE" class="campo-scheda" /></p>
+		<p><strong>Anno Ultima DE:</strong> <input id="Anno_Presentazione_Ultima_DE" class="campo-scheda" /></p>
+		<p><strong>Anno Prossima DE:</strong> <input id="Anno_Presentazione_Prossima_DE" class="campo-scheda" /></p>
+	</div>
+	<div class="riga-campi">
+		<p><strong>Sito Sottoposto a Diagnosi:</strong> <input type="checkbox" id="Sito_Sottoposto_A_Diagnosi" class="campo-scheda" /></p>
+		<p><strong>Comunicazioni Annuali:</strong> <input type="checkbox" id="Comunicazioni_Annuali" class="campo-scheda" /></p>
+	</div>
+  </section>
+
+  <!-- 🔹 Note -->
+  <section>
+    <h3>📝 Note e Modifiche</h3>
+	<div class="riga-campi">
+		<p><strong>Modificato da:</strong> <input id="Modificato_da" class="campo-scheda campo-non-editabile" /></p>
+		<p><strong>Data/Ora Modifica:</strong> <input id="Data_ora_modifica" class="campo-scheda campo-non-editabile" /></p>
+	</div>
+  </section>
+</div>
+
+
+<script>
+
+// 🔧 Funzioni toolbar
+function modificaScheda() {
+  alert("🔧 Funzione di modifica in arrivo...");
+}
+
+function salvaScheda() {
+  const dati = {};
+  campiScheda.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) {
+      dati[id] = campo.value || "";
+    }
+  });
+
+  console.log("📤 Dati da salvare:", dati);
+  // Qui potrai inviare i dati a VBA, a un database, o esportarli
+}
+
+function esportaScheda() {
+  alert("📤 Esportazione in corso...");
+}
+
+function chiudiScheda() {
+  document.getElementById('colonna-destra').innerHTML = '';
+}
+
+// 🧩 Funzione unica: svuota e popola la scheda cliente
+function popolaSchedaCliente(dati) {
+  const tuttiCampi = document.querySelectorAll(".campo-scheda");
+
+  tuttiCampi.forEach(campo => {
+    const nome = campo.id;
+    if (!(nome in dati)) {
+      campo.classList.add("campo-mancante");
+      if (campo.type === "checkbox") {
+        campo.checked = false;
+      } else {
+        campo.value = `⚠️  ${nome}`;
+      }
+      return;
+    }
+    campo.classList.remove("campo-mancante");
+    const valore = dati[nome];
+    if (campo.type === "checkbox") {
+      const normalizzato = String(valore).toLowerCase();
+      campo.checked = (normalizzato === "true" || normalizzato === "vero" || normalizzato === "1");
+    } else {
+      campo.value = valore || "";
+    }
+  });
+}
+
+
+
+
+
+
+
+</script>
+
+</script>
+
