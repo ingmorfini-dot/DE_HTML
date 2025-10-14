@@ -1,0 +1,119 @@
+.tema-scuro {
+  --bg-color: #1c1c1c;
+  --text-color: #f0f0f0;
+  --accent-color: #444;
+  --hover-color: #555;
+  --label-color: #cccccc;
+}
+
+.tema-chiaro {
+  --bg-color: #f9f9f9;
+  --text-color: #222;
+  --accent-color: #ccc;
+  --hover-color: #e0e0e0;
+  --label-color: #333;
+}
+
+.tema-neutro {
+  --bg-color: #e0e0e0;
+  --text-color: #333;
+  --accent-color: #999;
+  --hover-color: #bbbbbb;
+  --label-color: #222;
+}
+
+.tema-verde {
+  --bg-color: #0f2f1f;
+  --text-color: #cceedd;
+  --accent-color: #33cc99;
+  --hover-color: #55ddaa;
+  --label-color: #aaffcc;
+}
+
+.tema-blu {
+  --bg-color: #0d1a2b;
+  --text-color: #cce6ff;
+  --accent-color: #3399ff;
+  --hover-color: #66b3ff;
+  --label-color: #99ccff;
+}
+
+.tema-rosso {
+  --bg-color: #2b0d0d;
+  --text-color: #ffcccc;
+  --accent-color: #ff4444;
+  --hover-color: #ff6666;
+  --label-color: #ffaaaa;
+}
+
+.tema-viola {
+  --bg-color: #1f0f2f;
+  --text-color: #e0ccff;
+  --accent-color: #aa66cc;
+  --hover-color: #cc99ff;
+  --label-color: #ddbbff;
+}
+
+.tema-cyber {
+  --bg-color: #0a0a0a;
+  --text-color: #00ffcc;
+  --accent-color: #ff00ff;
+  --hover-color: #ff66ff;
+  --label-color: #66ffcc;
+}
+
+.tema-cartoon {
+  --bg-color: #fff8dc;
+  --text-color: #333;
+  --accent-color: #ff9900;
+  --hover-color: #ffbb33;
+  --label-color: #444;
+}
+
+.tema-matrix {
+  --bg-color: #000;
+  --text-color: #00ff00;
+  --accent-color: #003300;
+  --hover-color: #006600;
+  --label-color: #00cc00;
+}
+
+.tema-morfini {
+  --bg-color: #0e1a24;
+  --text-color: #e0f7ff;
+  --accent-color: #33ccff;
+  --hover-color: #66ddff;
+  --label-color: #99eaff;
+}
+
+.tema-quantico {
+  --bg-color: #0a001f;
+  --text-color: #00faff;
+  --accent-color: #ff00cc;
+  --hover-color: #ff66dd;
+  --label-color: #66ffee;
+}
+
+.tema-nebulosa {
+  --bg-color: #1b0033;
+  --text-color: #f0e6ff;
+  --accent-color: #ff66cc;
+  --hover-color: #ff99dd;
+  --label-color: #e6ccff;
+}
+
+.tema-ghiaccio {
+  --bg-color: #e6f7ff;
+  --text-color: #003344;
+  --accent-color: #66ccff;
+  --hover-color: #99ddff;
+  --label-color: #004466;
+}
+
+.tema-hologram {
+  --bg-color: #000022;
+  --text-color: #ccffff;
+  --accent-color: #00ffff;
+  --hover-color: #33ffff;
+  --label-color: #66ffff;
+}

@@ -4,8 +4,8 @@
   display: flex;
   gap: 12px;
   padding: 0.8rem;
-  background: linear-gradient(to right, #222, #333);
-  border-bottom: 2px solid #444;
+  background-color: var(--bg-color);
+  border-bottom: 2px solid var(--accent-color);
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   border-radius: 10px 10px 0 0;
   justify-content: flex-start;
@@ -13,8 +13,8 @@
 }
 
 .btn-toolbar {
-  background-color: #444;
-  color: #fff;
+  background-color: var(--accent-color);
+  color: var(--text-color);
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
@@ -24,30 +24,30 @@
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 .btn-toolbar:hover {
-  background-color: #666;
+  background-color: var(--bg-color);
   transform: scale(1.05);
 }
 
 /* 📄 Scheda cliente */
 .scheda-cliente {
   padding: 0.8rem;
-  background-color: #1a1a1a;
-  color: #f0f0f0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   font-family: 'Segoe UI', sans-serif;
   border-radius: 0 0 10px 10px;
 }
 .scheda-cliente h2 {
   margin-top: 0;
   font-size: 1.3rem;
-  color: #33cc99;
+  color: var(--accent-color);
 }
 .scheda-cliente section {
   margin-top: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--accent-color);
 }
 .scheda-cliente h3 {
-  color: #33cc99; /* oppure #ffcc66 */
+  color: var(--accent-color);
   font-size: 0.95rem;
   margin-bottom: 0.3rem;
   text-transform: uppercase;
@@ -59,19 +59,19 @@
   font-size: 0.85rem;
 }
 .scheda-cliente strong {
-  color: #ccc;
+  color: var(--text-color);
 }
 .scheda-cliente label,
 .scheda-cliente strong {
-  color: #66ccff; /* azzurro chiaro */
+  color: var(--accent-color);
   font-weight: bold;
 }
 
 /* 🧾 Campi input */
 .campo-scheda {
-  background-color: #222;
-  color: #fff;
-  border: 1px solid #555;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--accent-color);
   border-radius: 5px;
   padding: 4px 8px;
   font-size: 0.8rem;
@@ -79,7 +79,7 @@
   box-sizing: border-box;
 }
 .campo-non-editabile {
-  background-color: #333;
+  background-color: var(--bg-color);
   color: #aaa;
   border: none;
   pointer-events: none;
@@ -97,37 +97,37 @@
   flex: 1;
   min-width: 150px;
 }
+
 /* ✅ Checkbox visibili e coerenti */
 input[type="checkbox"].campo-scheda {
   width: 20px;
   height: 20px;
   transform: scale(1.4);
-  accent-color: #33cc99;
+  accent-color: var(--accent-color);
   cursor: pointer;
   margin-left: 6px;
   margin-right: 6px;
   vertical-align: middle;
-  background-color: #222;
-  border: 1px solid #555;
+  background-color: var(--bg-color);
+  border: 1px solid var(--accent-color);
   border-radius: 4px;
 }
 
+/* ⚠️ Campi mancanti */
 .campo-mancante {
   border: 1px solid #ffcc00 !important;
   background-color: #2a2a00 !important;
   color: #ffcc00 !important;
   font-style: italic;
 }
-
-
-
 </style>
+
   <h2>📄 Scheda Cliente</h2>
 <div class="toolbar-scheda">
   <button class="btn-toolbar" onclick="modificaScheda()">✏️ Modifica</button>
   <button class="btn-toolbar" onclick="salvaScheda()">💾 Salva</button>
   <button class="btn-toolbar" onclick="esportaScheda()">📤 Esporta</button>
-  <button class="btn-toolbar" onclick="chiudiScheda()">❌ Chiudi</button>
+  <button class="btn-toolbar" onclick="chiudiSchedaCliente()">❌ Chiudi</button>
 </div>
 
 <div class="scheda-cliente">
@@ -260,7 +260,7 @@ function esportaScheda() {
   alert("📤 Esportazione in corso...");
 }
 
-function chiudiScheda() {
+function chiudiSchedaCliente() {
   document.getElementById('colonna-destra').innerHTML = '';
 }
 
@@ -298,5 +298,4 @@ function popolaSchedaCliente(dati) {
 
 </script>
 
-</script>
 

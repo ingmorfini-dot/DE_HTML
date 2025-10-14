@@ -5,112 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Applicazione</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="temi.css" />
   <script>
-  // 🔹 Carica una maschera (es. clienti.html) nella colonna sinistra
-  function caricaMaschera(nome) {
-    // ✅ Invia segnale di "load" a VBA
-    document.getElementById('ponte').value = 'home:' + nome + ':load';
+// 🔹 Cambia tema e aggiorna localStorage + combo box
+function cambiaTema(nomeTema) {
+  document.body.classList.remove(
+    'tema-scuro',
+    'tema-chiaro',
+    'tema-neutro',
+    'tema-verde',
+    'tema-blu',
+    'tema-rosso',
+    'tema-viola',
+    'tema-cyber',
+    'tema-cartoon',
+    'tema-matrix',
+    'tema-morfini',
+    'tema-quantico',
+    'tema-nebulosa',
+    'tema-ghiaccio',
+    'tema-hologram'
+  );
 
-    fetch(nome + '.html')
-      .then(response => response.text())
-      .then(html => {
-        const contenitore = document.getElementById('colonna-sinistra');
-        contenitore.innerHTML = '';
-        contenitore.innerHTML = html;
+  document.body.classList.add(nomeTema);
+  localStorage.setItem('tema', nomeTema);
 
-        // 🔹 Reiniezione manuale degli script inline (necessaria dopo innerHTML)
-        const scripts = contenitore.querySelectorAll('script');
-        scripts.forEach(oldScript => {
-          const newScript = document.createElement('script');
-          if (oldScript.src) {
-            newScript.src = oldScript.src;
-          } else {
-            newScript.textContent = oldScript.textContent;
-          }
-          document.head.appendChild(newScript); 
-        });
+  const selettore = document.getElementById('selettore-tema');
+  if (selettore) selettore.value = nomeTema;
+}
 
-        // ✅ Invia segnale di "ok" a VBA dopo il caricamento
-        document.getElementById('ponte').value = 'home:' + nome + ':ok';
-      })
-      .catch(error => {
-        console.error('Errore nel caricamento:', error);
-      });
-  }
 
- 
-  // 🔹 Inizializzazione al caricamento della pagina
-  
-  window.addEventListener('DOMContentLoaded', () => {
-    const ponte = document.getElementById('ponte');
-    const log = document.getElementById('log-ponte');
-    const cruscotto = document.getElementById('cruscotto-ponte');
-    const toggleBtn = document.getElementById('toggle-log');
-    let ultimoValore = ponte.value;
+// 🔹 Carica una maschera (es. clienti.html) nella colonna sinistra
+function caricaMaschera(nome) {
+	if (typeof chiudiSchedaCliente === 'function') {
+		chiudiSchedaCliente();
+	}
+  document.getElementById('ponte').value = 'home:' + nome + ':load';
 
-    // 🔹 Mostra/nasconde il cruscotto log
-    toggleBtn.addEventListener('click', () => {
-      cruscotto.classList.toggle('hidden');
-    });
+  fetch(nome + '.html')
+    .then(response => response.text())
+    .then(html => {
+      const contenitore = document.getElementById('colonna-sinistra');
+      contenitore.innerHTML = html;
 
-    // 🔹 Monitoraggio continuo del valore ponte (ogni 200ms)
-    setInterval(() => {
-      if (ponte.value !== ultimoValore && ponte.value.trim() !== "") {
-        const voce = document.createElement('div');
-        voce.textContent = ponte.value;
-        log.prepend(voce);
-        ultimoValore = ponte.value;
-
-        if (log.children.length > 50) {
-          log.removeChild(log.lastChild);
+      const scripts = contenitore.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
         }
-      }
-    }, 200);
+        document.head.appendChild(newScript);
+      });
 
-    // 🔹 Gestione trascinamento del divisore centrale
-    let isDragging = false;
-
-    const divisore = document.getElementById('divisore');
-    const contenitore = document.getElementById('contenuto');
-    const sinistra = document.getElementById('colonna-sinistra');
-    const destra = document.getElementById('colonna-destra');
-
-    // 🔹 Inizio trascinamento
-    divisore.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      document.body.style.cursor = 'col-resize';
+      document.getElementById('ponte').value = 'home:' + nome + ':ok';
+    })
+    .catch(error => {
+      console.error('Errore nel caricamento:', error);
     });
+}
 
-    // 🔹 Trascinamento in corso
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-
-      const offset = e.clientX - contenitore.offsetLeft;
-      const totalWidth = contenitore.offsetWidth;
-      const minWidth = 100;
-
-      if (offset > minWidth && offset < totalWidth - minWidth) {
-        sinistra.style.flex = 'none';
-        sinistra.style.width = offset + 'px';
-        destra.style.flex = '1';
-      }
-    });
-
-    // 🔹 Fine trascinamento
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        document.body.style.cursor = 'default';
-      }
-    });
-  });
-
-// 🔹 Utility per tutte le pagine
+// 🔹 Utility per suggerimenti input
 function impostaSuggerimenti(idCampo, arrayValori) {
   const classeAssociata = idCampo + "-datalist";
   const campi = document.querySelectorAll("." + classeAssociata);
-
-  if (campi.length === 0) return;
 
   campi.forEach(campo => {
     if (campo.tagName !== "INPUT" || campo.type !== "text") return;
@@ -136,17 +95,15 @@ function impostaSuggerimenti(idCampo, arrayValori) {
   });
 }
 
-
+// 🔹 Utility per opzioni select
 function impostaOpzioniSelect(idCampo, arrayValori) {
   const classeTarget = idCampo + "-select";
   const campi = document.querySelectorAll("." + classeTarget);
 
-  if (campi.length === 0) return;
-
   campi.forEach(campo => {
     if (campo.tagName !== "SELECT") return;
 
-    campo.innerHTML = ""; // Pulisce le opzioni esistenti
+    campo.innerHTML = "";
 
     const placeholder = document.createElement("option");
     placeholder.value = "";
@@ -162,21 +119,116 @@ function impostaOpzioniSelect(idCampo, arrayValori) {
   });
 }
 
+// 🔹 Inizializzazione al caricamento
+window.addEventListener('DOMContentLoaded', () => {
+  // ✅ Applica il tema salvato
+  const temaSalvato = localStorage.getItem('tema');
+  if (temaSalvato) {
+    document.body.classList.add(temaSalvato);
+    const selettore = document.getElementById('selettore-tema');
+    if (selettore) selettore.value = temaSalvato;
+  }
+
+  // ✅ Log ponte
+  const ponte = document.getElementById('ponte');
+  const log = document.getElementById('log-ponte');
+  const cruscotto = document.getElementById('cruscotto-ponte');
+  const toggleBtn = document.getElementById('toggle-log');
+  let ultimoValore = ponte.value;
+
+  toggleBtn.addEventListener('click', () => {
+    cruscotto.classList.toggle('hidden');
+  });
+
+  setInterval(() => {
+    if (ponte.value !== ultimoValore && ponte.value.trim() !== "") {
+      const voce = document.createElement('div');
+      voce.textContent = ponte.value;
+      log.prepend(voce);
+      ultimoValore = ponte.value;
+
+      if (log.children.length > 50) {
+        log.removeChild(log.lastChild);
+      }
+    }
+  }, 200);
+
+  // ✅ Gestione trascinamento divisore
+  let isDragging = false;
+  const divisore = document.getElementById('divisore');
+  const contenitore = document.getElementById('contenuto');
+  const sinistra = document.getElementById('colonna-sinistra');
+  const destra = document.getElementById('colonna-destra');
+
+  divisore.addEventListener('mousedown', () => {
+    isDragging = true;
+    document.body.style.cursor = 'col-resize';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const offset = e.clientX - contenitore.offsetLeft;
+    const totalWidth = contenitore.offsetWidth;
+    const minWidth = 100;
+
+    if (offset > minWidth && offset < totalWidth - minWidth) {
+      sinistra.style.flex = 'none';
+      sinistra.style.width = offset + 'px';
+      destra.style.flex = '1';
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      document.body.style.cursor = 'default';
+    }
+  });
+});
+
+function salvaStile() {
+  const ponte = document.getElementById('ponte');
+  if (ponte) ponte.value = 'home:stile:salva';
+}
 
 </script>
-
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo" />
-    <div class="separator"></div>
-    <div class="button-group">
-      <button onclick="caricaMaschera('clienti')">👥 Clienti</button>
-      <button onclick="caricaMaschera('fornitori')">🏢 Fornitori</button>
-      <button onclick="caricaMaschera('progetti')">📁 Progetti</button>
-      <button onclick="caricaMaschera('diagnosi')">🔍 Diagnosi</button>
-    </div>
-  </header>
+<header>
+  <img src="Logo.svg" alt="Logo" />
+  <div class="separator"></div>
+
+  <div class="button-group">
+    <button onclick="caricaMaschera('clienti')">👥 Clienti</button>
+    <button onclick="caricaMaschera('fornitori')">🏢 Fornitori</button>
+    <button onclick="caricaMaschera('progetti')">📁 Progetti</button>
+    <button onclick="caricaMaschera('diagnosi')">🔍 Diagnosi</button>
+  </div>
+
+  <div class="button-group">
+    <label for="selettore-tema">🎨 Tema:</label>
+    <select id="selettore-tema" onchange="cambiaTema(this.value)">
+      <option value="tema-scuro">🌑 Scuro</option>
+      <option value="tema-chiaro">🌞 Chiaro</option>
+      <option value="tema-neutro">🌫️ Neutro</option>
+      <option value="tema-verde">🌿 Verde</option>
+      <option value="tema-blu">🌊 Blu</option>
+      <option value="tema-rosso">🔥 Rosso</option>
+      <option value="tema-viola">🪻 Viola</option>
+      <option value="tema-cyber">🧬 Cyberpunk</option>
+      <option value="tema-cartoon">🎨 Cartoon</option>
+      <option value="tema-matrix">🕶️ Matrix</option>
+      <option value="tema-morfini">🏢 Morfini</option>
+      <option value="tema-quantico">🧠 Quantico</option>
+      <option value="tema-nebulosa">🌌 Nebulosa</option>
+      <option value="tema-ghiaccio">🧊 Ghiaccio Tecnico</option>
+      <option value="tema-hologram">🪞 Hologram</option>
+    </select>
+    <button onclick="salvaStile()">💾 Salva</button>
+  </div>
+</header>
+
+
 
 <main>
   <div id="contenuto" class="split-view">
