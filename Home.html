@@ -131,6 +131,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ✅ Log ponte
   const ponte = document.getElementById('ponte');
+  const inDemo = window.location.href.includes("demo");
   const log = document.getElementById('log-ponte');
   const cruscotto = document.getElementById('cruscotto-ponte');
   const toggleBtn = document.getElementById('toggle-log');
@@ -190,6 +191,25 @@ function salvaStile() {
   const ponte = document.getElementById('ponte');
   if (ponte) ponte.value = 'home:stile:salva';
 }
+if (inDemo) {
+  const script = document.createElement("script");
+  script.src = "simulatore.js";
+  script.onload = () => {
+    if (typeof simulaPonte === "function") {
+      const ponte = document.getElementById("ponte");
+      const observer = new MutationObserver(() => {
+        const comando = ponte.value;
+        if (comando) {
+          console.log("🧪 Ponte simulato:", comando);
+          simulaPonte(comando);
+        }
+      });
+      observer.observe(ponte, { attributes: true, attributeFilter: ["value"] });
+    }
+  };
+  document.head.appendChild(script);
+}
+
 
 </script>
 </head>
