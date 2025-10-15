@@ -6,41 +6,26 @@
   <title>Dashboard Applicazione</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="temi.css" />
-  <script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script>
 // 🔹 Cambia tema e aggiorna localStorage + combo box
 function cambiaTema(nomeTema) {
   document.body.classList.remove(
-    'tema-scuro',
-    'tema-chiaro',
-    'tema-neutro',
-    'tema-verde',
-    'tema-blu',
-    'tema-rosso',
-    'tema-viola',
-    'tema-cyber',
-    'tema-cartoon',
-    'tema-matrix',
-    'tema-morfini',
-    'tema-quantico',
-    'tema-nebulosa',
-    'tema-ghiaccio',
-    'tema-hologram'
+    'tema-scuro', 'tema-chiaro', 'tema-neutro', 'tema-verde', 'tema-blu',
+    'tema-rosso', 'tema-viola', 'tema-cyber', 'tema-cartoon', 'tema-matrix',
+    'tema-morfini', 'tema-quantico', 'tema-nebulosa', 'tema-ghiaccio', 'tema-hologram'
   );
-
   document.body.classList.add(nomeTema);
   localStorage.setItem('tema', nomeTema);
-
   const selettore = document.getElementById('selettore-tema');
   if (selettore) selettore.value = nomeTema;
 }
 
-
 // 🔹 Carica una maschera (es. clienti.html) nella colonna sinistra
 function caricaMaschera(nome) {
-	if (typeof chiudiSchedaCliente === 'function') {
-		chiudiSchedaCliente();
-	}
-  document.getElementById('ponte').value = 'home:' + nome + ':load';
+  if (typeof chiudiSchedaCliente === 'function') chiudiSchedaCliente();
+  const ponte = document.getElementById('ponte');
+  ponte.value = 'home:' + nome + ':load';
 
   fetch(nome + '.html')
     .then(response => response.text())
@@ -59,7 +44,7 @@ function caricaMaschera(nome) {
         document.head.appendChild(newScript);
       });
 
-      document.getElementById('ponte').value = 'home:' + nome + ':ok';
+      ponte.value = 'home:' + nome + ':ok';
     })
     .catch(error => {
       console.error('Errore nel caricamento:', error);
@@ -119,6 +104,40 @@ function impostaOpzioniSelect(idCampo, arrayValori) {
   });
 }
 
+// 🔹 Salva stile
+function salvaStile() {
+  const ponte = document.getElementById('ponte');
+  if (ponte) ponte.value = 'home:stile:salva';
+}
+
+// 🔹 Attiva modalità demo
+function attivaModalitaDemo() {
+  if (document.querySelector("script[src='simulatore.js']")) return; // evita doppio caricamento
+
+  const script = document.createElement("script");
+  script.src = "simulatore.js";
+  script.onload = () => {
+    if (typeof simulaPonte === "function") {
+      const ponte = document.getElementById("ponte");
+      const observer = new MutationObserver(() => {
+        const comando = ponte.value;
+        if (comando) {
+          console.log("🧪 Ponte simulato:", comando);
+          simulaPonte(comando);
+        }
+      });
+      observer.observe(ponte, { attributes: true, attributeFilter: ["value"] });
+
+      const comandoCorrente = ponte.value;
+      if (comandoCorrente) {
+        console.log("🔁 Rilancio comando corrente:", comandoCorrente);
+        simulaPonte(comandoCorrente);
+      }
+    }
+  };
+  document.head.appendChild(script);
+}
+
 // 🔹 Inizializzazione al caricamento
 window.addEventListener('DOMContentLoaded', () => {
   // ✅ Applica il tema salvato
@@ -131,7 +150,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ✅ Log ponte
   const ponte = document.getElementById('ponte');
-  const inDemo = window.location.href.includes("demo");
   const log = document.getElementById('log-ponte');
   const cruscotto = document.getElementById('cruscotto-ponte');
   const toggleBtn = document.getElementById('toggle-log');
@@ -185,33 +203,16 @@ window.addEventListener('DOMContentLoaded', () => {
       document.body.style.cursor = 'default';
     }
   });
+
+  // ✅ Modalità demo: attiva se già spuntata
+  const toggleDemo = document.getElementById("toggle-demo");
+  if (toggleDemo?.checked) attivaModalitaDemo();
+  toggleDemo?.addEventListener("change", () => {
+    if (toggleDemo.checked) attivaModalitaDemo();
+  });
 });
-
-function salvaStile() {
-  const ponte = document.getElementById('ponte');
-  if (ponte) ponte.value = 'home:stile:salva';
-}
-if (inDemo) {
-  const script = document.createElement("script");
-  script.src = "simulatore.js";
-  script.onload = () => {
-    if (typeof simulaPonte === "function") {
-      const ponte = document.getElementById("ponte");
-      const observer = new MutationObserver(() => {
-        const comando = ponte.value;
-        if (comando) {
-          console.log("🧪 Ponte simulato:", comando);
-          simulaPonte(comando);
-        }
-      });
-      observer.observe(ponte, { attributes: true, attributeFilter: ["value"] });
-    }
-  };
-  document.head.appendChild(script);
-}
-
-
 </script>
+
 </head>
 <body>
 <header>
@@ -243,8 +244,13 @@ if (inDemo) {
       <option value="tema-nebulosa">🌌 Nebulosa</option>
       <option value="tema-ghiaccio">🧊 Ghiaccio Tecnico</option>
       <option value="tema-hologram">🪞 Hologram</option>
+	  <label>
     </select>
     <button onclick="salvaStile()">💾 Salva</button>
+	<label for="toggle-demo">
+	  <input type="checkbox" id="toggle-demo" />
+	  Modalità Demo
+	</label>
   </div>
 </header>
 
