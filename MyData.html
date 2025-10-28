@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esecuzione Query e Dati</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { font-family: 'Inter', sans-serif; }
+        table { table-layout: fixed; width: 100%; }
+        th, td { white-space: pre-wrap; word-break: break-word; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 text-center text-indigo-700">Risultati Query API</h2>
+
+        <div class="flex justify-between items-center mb-4">
+            <button id="cleanButton"
+                    class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    disabled>
+                Pulisci Testo (Simula VBA PulisciTestoCelle)
+            </button>
+            <a href="Mylogin.html" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Torna al Login</a>
+        </div>
+
+        <div id="statusMessage" class="mt-4 p-3 rounded-lg text-sm font-medium hidden"></div>
+
+        <div id="tableContainer" class="mt-8 overflow-x-auto shadow-lg rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead id="tableHead" class="bg-gray-50"></thead>
+                <tbody id="tableBody" class="bg-white divide-y divide-gray-200"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // *** CONFIGURAZIONE API ***
+        const API_BASE_URL = 'https://www.ingmorfini.com'; 
+        const QUERY_ENDPOINT = '/api/Query/execute'; 
+        const QUERY_SQL = "SELECT * FROM [MSSql216310].[dbo].[T_Clienti]";
+        // **************************
+
+        const statusMessage = document.getElementById('statusMessage');
+        const dataTableBody = document.getElementById('tableBody');
+        const dataTableHead = document.getElementById('tableHead');
+        const cleanButton = document.getElementById('cleanButton');
+        
+        const currentToken = sessionStorage.getItem('jwtToken') || localStorage.getItem('jwtToken');
+        
+        const queryPayload = JSON.stringify({
+            sql: QUERY_SQL
+        });
+
+        function showMessage(msg, type) {
+            statusMessage.textContent = msg;
+            statusMessage.className = `mt-4 p-3 rounded-lg text-sm font-medium ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            statusMessage.style.display = 'block';
+        }
+
+        // Equivalente di Sub PulisciTestoCelle()
+        function pulisciTestoCelle(testo) {
+            if (typeof testo !== 'string' || !testo) return "";
+            
+            const linee = testo.split('\n');
+            let nuovaTesto = [];
+
+            for (const riga of linee) {
+                if (riga.trim() !== "") {
+                    nuovaTesto.push(riga);
+                }
+            }
+            
+            return nuovaTesto.join('\n');
+        }
+
+        async function fetchAndDisplayData() {
+            if (!currentToken) {
+                showMessage('❌ Errore: Token di accesso non trovato. Torna al Login.', 'error');
+                cleanButton.disabled = true;
+                return;
+            }
+            
+            showMessage('Esecuzione Query SQL in corso...', 'default');
+
+            try {
+                const response = await fetch(API_BASE_URL + QUERY_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`, 
+                        'Content-Type': 'application/json',
+                        'Origin': API_BASE_URL // Tentativo di bypass CORS
+                    },
+                    body: queryPayload
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && Array.isArray(data)) { 
+                    
+                    if (data.length > 0) {
+                        renderTable(data);
+                        showMessage(`✅ Dati scaricati con successo. ${data.length} righe.`, 'success');
+                        cleanButton.disabled = false;
+                    } else {
+                        showMessage('Nessun dato trovato.', 'default');
+                    }
+                    
+                } else if (response.status === 401) {
+                    showMessage('❌ Errore: Token non valido o scaduto. Esegui nuovamente il Login.', 'error');
+                }
+                else {
+                    const errorMsg = data.message || data.title || 'Errore durante l\'esecuzione della query.';
+                    showMessage(`❌ Query fallita. Status: ${response.status}. Risposta: ${errorMsg}`, 'error');
+                }
+
+            } catch (error) {
+                console.error('Errore di rete:', error);
+                showMessage('❌ Errore di connessione all\'API. Controlla la console.', 'error');
+            }
+        }
+        
+        function renderTable(data) {
+            if (data.length === 0) return;
+
+            const headers = Object.keys(data[0]);
+            dataTableHead.innerHTML = '<tr>' + headers.map(h => `<th class="px-6 py-3 text-left">${h}</th>`).join('') + '</tr>';
+            
+            dataTableBody.innerHTML = data.map(row => {
+                const cells = headers.map(header => {
+                    let cellContent = row[header];
+                    
+                    // ⭐ LOGICA DI PULIZIA AGGIORNATA: Cerca per parola chiave ⭐
+                    const headerLower = header.toLowerCase();
+                    const isCleanableField = headerLower.includes('descrizion') || headerLower.includes('note');
+
+                    if (isCleanableField) {
+                        // SIMULAZIONE DATI SPORCHI per testare la pulizia
+                        cellContent = (cellContent || '') + '\n\n\nRiga vuota 1\n \n\nRiga vuota 2\n';
+                    }
+                    
+                    const dataAttribute = isCleanableField ? 'data-cleanable="true"' : '';
+                    
+                    return `<td class="px-6 py-4" ${dataAttribute}>${cellContent}</td>`;
+                }).join('');
+                return `<tr>${cells}</tr>`;
+            }).join('');
+        }
+
+        cleanButton.addEventListener('click', function() {
+            const cleanableCells = document.querySelectorAll('td[data-cleanable="true"]');
+            
+            cleanableCells.forEach(cell => {
+                cell.textContent = pulisciTestoCelle(cell.textContent);
+            });
+            
+            showMessage('✨ Testo delle celle contrassegnate ripulito!', 'success');
+        });
+
+        fetchAndDisplayData();
+    </script>
+</body>
+</html>
