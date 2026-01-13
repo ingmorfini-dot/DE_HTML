@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xsi:type="TaskPaneApp">
+  <Id>5ec26090-67c4-4632-9b2e-063a825e687a</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>MioNome</ProviderName>
+  <DefaultLocale>it-IT</DefaultLocale> 
+  <DisplayName DefaultValue="TestSharepoint1" />
+  <Description DefaultValue="Esempio di integrazione Web" />
+  <Hosts>
+    <Host Name="Workbook" />
+  </Hosts>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://ingmorfini-dot.github.io/DE_HTML/Home.html" />
+  </DefaultSettings>
+  <Permissions>ReadWriteWorkbook</Permissions>
+</OfficeApp>
