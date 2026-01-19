@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+    <div id="app-container">Caricamento...</div>
+    <script>
+        const MY_NAMESPACE = "http://schemas.ingmorfini.it/myaddin";
+        let xmlContent = "";
+        window.dialog = null; 
+
+        Office.onReady(async (info) => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('view') === 'popup') {
+                Office.context.ui.addHandlerAsync(Office.EventType.DialogParentMessageReceived, (arg) => {
+                    renderizza(arg.message);
+                });
+                Office.context.ui.messageParent("READY");
+            } else {
+                window.openDynamicDialog = (h, w) => {
+                    const url = window.location.href + (window.location.href.includes('?') ? '&' : '?') + "view=popup";
+                    Office.context.ui.displayDialogAsync(url, { height: h, width: w, displayInIframe: true }, (res) => {
+                        window.dialog = res.value;
+                        window.dialog.addEventHandler(Office.EventType.DialogMessageReceived, (arg) => {
+                            if (arg.message === "READY") {
+                                window.dialog.messageChild(xmlContent);
+                            } else {
+                                // Tenta di gestire EXCEL_RUN, altrimenti ignora silenziosamente
+                                handleUniversalCommands(arg.message);
+                            }
+                        });
+                    });
+                };
+                caricaDalGuscio();
+            }
+        });
+
+        async function handleUniversalCommands(msg) {
+            try {
+                const cmd = JSON.parse(msg);
+                if (cmd.type === "EXCEL_RUN") {
+                    await Excel.run(async (context) => {
+                        const fn = new Function('context', cmd.code);
+                        await fn(context);
+                        await context.sync();
+                    });
+                }
+            } catch (e) {
+                // Se non è JSON o non è EXCEL_RUN, l'Index sta zitto e lascia il messaggio 
+                // disponibile per il codice nel Guscio.
+            }
+        }
+
+        async function caricaDalGuscio() {
+            await Excel.run(async (context) => {
+                const parts = context.workbook.customXmlParts.getByNamespace(MY_NAMESPACE);
+                parts.load("items");
+                await context.sync();
+                if (parts.items.length > 0) {
+                    const xml = parts.items[0].getXml();
+                    await context.sync();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xml.value, "text/xml");
+                    xmlContent = xmlDoc.documentElement.textContent;
+                    renderizza(xmlContent);
+                }
+            });
+        }
+
+function renderizza(html) {
+    // Se il messaggio sembra un JSON (inizia con {), NON renderizzarlo a video
+    if (html.trim().startsWith('{')) return; 
+
+    const container = document.getElementById('app-container');
+    container.innerHTML = html;
+    const scripts = container.getElementsByTagName('script');
+    for (let s of scripts) {
+        const newScript = document.createElement('script');
+        newScript.text = s.innerHTML;
+        document.body.appendChild(newScript);
+    }
+}
+    </script>
+</body>
+</html>
